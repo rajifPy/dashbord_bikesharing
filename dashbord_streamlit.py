@@ -7,8 +7,8 @@ from sklearn.cluster import KMeans
 
 
 # Load data
-day_df = pd.read_csv("C:/Users/muham/OneDrive - Universitas Airlangga/ML - Bangkit/DiCoding/Analisis Data Python/day.csv")
-hour_df = pd.read_csv("C:/Users/muham/OneDrive - Universitas Airlangga/ML - Bangkit/DiCoding/Analisis Data Python/hour.csv")
+day_df = pd.read_csv("https://raw.githubusercontent.com/rajifPy/dashbord_bikesharing/main/day.csv")
+hour_df = pd.read_csv("https://raw.githubusercontent.com/rajifPy/dashbord_bikesharing/main/hour.csv")
 
 custom_palette = ['#d0deec', '#97b2cc', '#8a9296']
 bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
