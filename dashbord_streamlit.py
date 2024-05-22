@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import KMeans
-
+import plotly.express as px
 
 # Load data
 day_df = pd.read_csv("https://raw.githubusercontent.com/rajifPy/dashbord_bikesharing/main/day.csv")
@@ -106,32 +105,9 @@ with col3:
     
 st.divider()
 
-# # Membuat jumlah penyewaan bulanan
-# st.subheader('Peminjam Bulanan Berdasarkan Rentang Waktu')
-
-# # Plot monthly bike rentals
-# fig, ax = plt.subplots(figsize=(30, 10))
-# ax.plot(
-#     monthly_rent_df.index,
-#     monthly_rent_df['cnt'],
-#     marker='o', 
-#     linewidth=2,
-#     color='tab:blue'
-# )
-
-# for index, row in enumerate(monthly_rent_df['cnt']):
-#     ax.text(index, row + 1, str(row), ha='center', va='bottom', fontsize=12)
-
-# ax.tick_params(axis='x', labelsize=25, rotation=45)
-# ax.tick_params(axis='y', labelsize=20)
-# plt.xlabel('Bulan')
-# plt.ylabel('Jumlah Pengguna Sepeda')
-
-# # Show plot in Streamlit
-# st.pyplot(fig)
-
 selected_chart = st.selectbox('Pilih Grafik',
                             ('Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca',
+                                                         'Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca',
                             'Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun',
                             'Jumlah Penyewaan Sepeda berdasarkan Musim',
                             'Analisis Clustering'))
@@ -139,82 +115,31 @@ selected_chart = st.selectbox('Pilih Grafik',
 if selected_chart == 'Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca':
     st.subheader('Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca')
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(
-        data=day_df,
-        x='weathersit',
-        y='cnt',
-        palette=custom_palette,
-        ax=ax
-    )
-    plt.title('Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca')
-    plt.xlabel('Kondisi Cuaca')
-    plt.ylabel('Jumlah Pengguna Sepeda')
-    st.pyplot(fig)
+    fig = px.bar(day_df, x='weathersit', y='cnt', color='weathersit', color_discrete_sequence=custom_palette)
+    fig.update_layout(title='Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca', xaxis_title='Kondisi Cuaca', yaxis_title='Jumlah Pengguna Sepeda')
+    st.plotly_chart(fig)
 
 elif selected_chart == 'Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun':
     st.subheader('Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun')
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(
-        data=monthly_counts,
-        x="mnth",
-        y="cnt",
-        hue="yr",
-        palette="tab10",
-        ax=ax
-    )
-    plt.title("Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun")
-    plt.xlabel("Bulan")
-    plt.ylabel("Jumlah")
-    plt.legend(title="Tahun", loc="upper right")
-    st.pyplot(fig)
-    
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.lineplot(
-        data=monthly_counts,
-        x="mnth",
-        y="cnt",
-        hue="yr",
-        palette="tab10",
-        marker="o",
-        ax=ax
-    )
-    plt.title("Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun")
-    plt.xlabel("Bulan")
-    plt.ylabel("Jumlah")
-    plt.legend(title="Tahun", loc="upper right")
-    st.pyplot(fig)
+
+    fig = px.bar(monthly_counts, x="mnth", y="cnt", color="yr", barmode="group")
+    fig.update_layout(title='Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun', xaxis_title='Bulan', yaxis_title='Jumlah', legend_title="Tahun")
+    st.plotly_chart(fig)
+
+    fig = px.line(monthly_counts, x="mnth", y="cnt", color="yr", markers=True)
+    fig.update_layout(title='Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun', xaxis_title='Bulan', yaxis_title='Jumlah', legend_title="Tahun")
+    st.plotly_chart(fig)
 
 elif selected_chart == 'Jumlah Penyewaan Sepeda berdasarkan Musim':
     st.subheader('Jumlah Penyewaan Sepeda berdasarkan Musim')
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(
-        data=seasonal_usage,
-        x='season',
-        y='cnt',
-        hue='season',
-        palette=colors,
-        ax=ax
-    )
-    plt.xlabel("Musim")
-    plt.ylabel("Jumlah")
-    plt.title("Jumlah Penyewaan Sepeda berdasarkan Musim")
-    plt.legend([],[], frameon=False)  # Hapus legenda kosong
-    st.pyplot(fig)
-    
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(
-        data=seasonal_usage_year,
-        x='season',
-        y='cnt',
-        hue='yr',
-        ax=ax
-    )
-    plt.xlabel("Musim")
-    plt.ylabel("Jumlah")
-    plt.title("Jumlah Peminjaman Sepeda berdasarkan Musim untuk Setiap Tahun")
-    plt.legend(title='Tahun')
-    st.pyplot(fig)
+
+    fig = px.bar(seasonal_usage, x='season', y='cnt', color='season', color_discrete_sequence=colors)
+    fig.update_layout(title='Jumlah Penyewaan Sepeda berdasarkan Musim', xaxis_title='Musim', yaxis_title='Jumlah', showlegend=False)
+    st.plotly_chart(fig)
+
+    fig = px.bar(seasonal_usage_year, x='season', y='cnt', color='yr')
+    fig.update_layout(title='Jumlah Peminjaman Sepeda berdasarkan Musim untuk Setiap Tahun', xaxis_title='Musim', yaxis_title='Jumlah', legend_title='Tahun')
+    st.plotly_chart(fig)
 
 elif selected_chart == 'Analisis Clustering':
     st.subheader('Analisis Clustering')
@@ -231,10 +156,12 @@ elif selected_chart == 'Analisis Clustering':
     kmeans.fit(X_cluster)
     cluster_labels = kmeans.predict(X_cluster)
 
+    # Menambahkan hasil clustering ke dalam dataframe
+    day_df['cluster'] = cluster_labels
+
     # Memvisualisasikan hasil clustering
-    plt.figure(figsize=(10, 6))
-    plt.scatter(X_cluster['temp'], X_cluster['hum'], c=cluster_labels, cmap='viridis', alpha=0.5)
-    plt.xlabel('Temperature')
-    plt.ylabel('Humidity')
-    plt.title('Clustering of Temperature vs Humidity')
-    st.pyplot(plt)
+    fig = px.scatter(day_df, x='temp', y='hum', color='cluster', 
+                     title='Clustering of Temperature vs Humidity', 
+                     labels={'temp': 'Temperature', 'hum': 'Humidity', 'cluster': 'Cluster'})
+    st.plotly_chart(fig)
+
