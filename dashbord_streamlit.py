@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from sklearn.cluster import KMeans
 import plotly.express as px
 
 # Load data
@@ -106,8 +105,7 @@ st.divider()
 selected_chart = st.selectbox('Pilih Grafik',
                             ('Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca',
                             'Jumlah Pengguna Sepeda per Bulan untuk Setiap Tahun',
-                            'Jumlah Penyewaan Sepeda berdasarkan Musim',
-                            'Analisis Clustering'))
+                            'Jumlah Penyewaan Sepeda berdasarkan Musim'))
 
 if selected_chart == 'Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca':
     st.subheader('Jumlah Pengguna Sepeda berdasarkan Kondisi Cuaca')
@@ -132,20 +130,6 @@ elif selected_chart == 'Jumlah Penyewaan Sepeda berdasarkan Musim':
     fig.update_layout(title='Jumlah Peminjaman Sepeda berdasarkan Musim untuk Setiap Tahun', xaxis_title='Musim', yaxis_title='Jumlah', legend_title='Tahun')
     st.plotly_chart(fig)
 
-elif selected_chart == 'Analisis Clustering':
-    st.subheader('Analisis Clustering')
-
-    # Memilih fitur untuk clustering
-    features = ['temp', 'hum']
-    X_cluster = day_df[features]
-
-    # Menentukan jumlah cluster
-    num_clusters = st.slider("Jumlah Cluster:", min_value=2, max_value=10, value=3, step=1)
-
-    # Melakukan clustering dengan K-Means
-    kmeans = KMeans(n_clusters=num_clusters, random_state=0)
-    kmeans.fit(X_cluster)
-    cluster_labels = kmeans.predict(X_cluster)
 
     # Memvisualisasikan hasil clustering
     fig = px.scatter(x=day_df['temp'], y=day_df['hum'], color=cluster_labels, labels={'x': 'Temperature', 'y': 'Humidity'}, title='Clustering of Temperature vs Humidity')
